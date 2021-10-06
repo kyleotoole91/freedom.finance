@@ -20,6 +20,10 @@ contract FreedomFinance {
   }
 
  function buyTokens() public payable {
+    //Check if the exchange has enough tokens
+    uint purchaseAmount = msg.value * rate;
+    uint tokenLiquidity = token.balanceOf(address(this));
+    require(tokenLiquidity >= purchaseAmount);
     //msg.sender who called this function. 
     //msg.value amount of Ether sent into the exchange
     uint tokenAmount = msg.value * rate;

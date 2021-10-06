@@ -1,2 +1,2 @@
 truffle test
-PAUSE
+pause
