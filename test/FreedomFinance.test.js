@@ -49,7 +49,7 @@ contract('Freedom.Finance', ([deployer, investor]) => {
                                                value: web3.utils.toWei('.01', 'ether')});  
     });
 
-    it('allow user to purchase a token with Ether/Wei for a fixed price of 100 tokens per Ether', async () => {
+    it('Purchase 1 token with .01 Ether', async () => {
       //check investor balance
       let investorBalance = await token.balanceOf(investor);
       assert.equal(investorBalance.toString(), freedomFinanceTokens('1'));  
@@ -57,7 +57,7 @@ contract('Freedom.Finance', ([deployer, investor]) => {
       let freedomFinanceBalance;
       freedomFinanceBalance = await token.balanceOf(freedomFinance.address);   
       assert.equal(freedomFinanceBalance.toString(), freedomFinanceTokens('999999')); 
-      //check Freedom.Finance balance ether balance went down
+      //check Freedom.Finance balance ether balance went up
       freedomFinanceBalance = await web3.eth.getBalance(freedomFinance.address);
       assert.equal(freedomFinanceBalance.toString(), web3.utils.toWei('.01', 'Ether')); 
       // check event TokenPurchased() data
@@ -66,6 +66,32 @@ contract('Freedom.Finance', ([deployer, investor]) => {
       assert.equal(event.token, token.address);
       assert.equal(event.amount.toString(), freedomFinanceTokens('1').toString());
       assert.equal(event.rate.toString(), '100');
+    });
+
+  });
+
+  describe('sellTokens()', async () => {
+    let result;
+    
+    before(async () => {
+      //investor must approve tokens before the sale
+      await token.approve(freedomFinance.address, freedomFinanceTokens('1'), {from: investor});
+      //insestor sells the tokens
+      result = await freedomFinance.sellTokens(freedomFinanceTokens('1'), {from: investor});  
+    });
+
+    it('Sell 1 token for .01 Ether', async () => {
+      //check investor balance after purchase
+      let investorBalance = await token.balanceOf(investor);
+      assert.equal(investorBalance.toString(), freedomFinanceTokens('0'));
+      
+      let freedomFinanceBalance;
+      freedomFinanceBalance = await token.balanceOf(freedomFinance.address);   
+      assert.equal(freedomFinanceBalance.toString(), freedomFinanceTokens('1000000')); 
+      //check Freedom.Finance balance ether balance went up
+      freedomFinanceBalance = await web3.eth.getBalance(freedomFinance.address);
+      assert.equal(freedomFinanceBalance.toString(), web3.utils.toWei('0', 'Ether')); 
+      
     });
 
   });
