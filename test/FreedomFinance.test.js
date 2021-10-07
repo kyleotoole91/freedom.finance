@@ -15,10 +15,10 @@ contract('Freedom.Finance', ([deployer, investor]) => {
   let token, freedomFinance;
 
   function CheckEventData(event) {
-      assert.equal(event.account, investor);
-      assert.equal(event.token, token.address);
-      assert.equal(event.amount.toString(), freedomFinanceTokens('1').toString());
-      assert.equal(event.rate.toString(), '100');
+    assert.equal(event.account, investor);
+    assert.equal(event.token, token.address);
+    assert.equal(event.amount.toString(), freedomFinanceTokens('1').toString());
+    assert.equal(event.rate.toString(), '100');
   }
    
   before(async () => {
