@@ -39,7 +39,11 @@ contract FreedomFinance {
   }
 
   function sellTokens(uint _amount) public payable {
+    //user cannot sell more tokens than they own
+    require(token.balanceOf(msg.sender) >= _amount);
+    //check Ether balance is enough
     uint etherAmount = _amount / rate;
+    require(address(this).balance >= etherAmount);
     // Take the user tokens
     token.transferFrom(msg.sender, address(this), _amount); 
     // Pay the user ether

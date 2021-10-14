@@ -15,6 +15,8 @@ contract('Freedom.Finance', ([deployer, investor]) => {
   let token, freedomFinance;
 
   function CheckEventData(event) {
+    console.log(event.account.toString());  
+    console.log(event.amount.toString()); 
     assert.equal(event.account, investor);
     assert.equal(event.token, token.address);
     assert.equal(event.amount.toString(), freedomFinanceTokens('1').toString());
@@ -52,8 +54,8 @@ contract('Freedom.Finance', ([deployer, investor]) => {
     
     before(async () => {
       //first buy 1 Freedom.Finance token 
-      result = await freedomFinance.buyTokens({from: investor, 
-                                               value: web3.utils.toWei('.01', 'ether')});  
+      result = await freedomFinance.buyTokens({ from: investor, 
+                                                value: web3.utils.toWei('.01', 'ether') });  
     });
 
     it('Purchase 1 token with .01 Ether', async () => {
@@ -78,9 +80,9 @@ contract('Freedom.Finance', ([deployer, investor]) => {
     
     before(async () => {
       //investor must approve tokens before the sale
-      await token.approve(freedomFinance.address, freedomFinanceTokens('1'), {from: investor});
+      await token.approve(freedomFinance.address, freedomFinanceTokens('1'), { from: investor });
       //insestor sells the tokens
-      result = await freedomFinance.sellTokens(freedomFinanceTokens('1'), {from: investor});  
+      result = await freedomFinance.sellTokens(freedomFinanceTokens('1'), { from: investor });  
     });
 
     it('Sell 1 token for .01 Ether', async () => {
@@ -96,6 +98,8 @@ contract('Freedom.Finance', ([deployer, investor]) => {
       assert.equal(freedomFinanceBalance.toString(), web3.utils.toWei('0', 'Ether')); 
       // check event TokenSale() data
       CheckEventData(result.logs[0].args);
+      //Investor cannot sell more tokens than they own
+      await freedomFinance.sellTokens(freedomFinanceTokens('1000001'), { from: investor }).should.be.rejected;
     });
 
   });
