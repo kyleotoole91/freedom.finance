@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import './App.css'
 import Navbar from './Navbar'
-import Main from './Main'
+import SellTokens from './SellTokens'
 import Token from '../abis/Token.json'
 import FreedomFinance from '../abis/FreedomFinance.json'
 const Web3 = require('web3')
 
-const noWeb3Msg = 'Please install a Web3 provider (MetaMask)';
-const connectedToWeb3Msg = 'Connected to Web3 wallet: ';
-let networkId = 0;
+const noWeb3Msg = 'Please install a Web3 provider (MetaMask)'
+const connectedToWeb3Msg = 'Connected to Web3 wallet: '
+let tokenContract = null
+let networkId = 0
 
 class App extends Component {
 
@@ -19,6 +20,7 @@ class App extends Component {
       accountBalance: '0',
       etherBalance: '0',
       tokenBalance: '0',
+      tokenBalanceEx: '0',
       loading: true
     }
   }
@@ -76,7 +78,7 @@ class App extends Component {
   async loadTokenContract() {
     const tokenData = Token.networks[networkId]
     if (tokenData) {
-      const tokenContract = new window.web3.eth.Contract(Token.abi, Token.networks[networkId].address)
+      tokenContract = new window.web3.eth.Contract(Token.abi, Token.networks[networkId].address)
       this.setState({ tokenContract })
       console.log(this.state.tokenContract)
       let tokenBalanceWei = await tokenContract.methods.balanceOf(this.state.account).call()
@@ -91,7 +93,10 @@ class App extends Component {
     const dAppData = FreedomFinance.networks[networkId]
     if (dAppData) {
       const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, FreedomFinance.networks[networkId].address)
-      this.setState({ dAppContract })
+      
+      let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(FreedomFinance.networks[networkId].address).call()
+      tokenBalanceEx = window.web3.utils.fromWei(tokenBalanceEx, 'ether') 
+      this.setState({ dAppContract, tokenBalanceEx })
       console.log(this.state.dAppContract)
     } else {
       window.alert('Unable to obtain dApp smart contract from network')
@@ -103,10 +108,9 @@ class App extends Component {
     if(this.state.loading) {
       content = <p id="loader" className="text-center">Loading...</p>
     } else {
-      content = <Main state={this.state}
-                      buyTokens={this.buyTokens}
+      content = <SellTokens state={this.state}
+                            buyTokens={this.buyTokens}
       />
-
     }
 
     return (

@@ -4,7 +4,7 @@ import tokenLogo from '../token-logo.png'
 
 let etherAmount
 
-class Main extends Component {
+class SellTokens extends Component {
 
   constructor(props) {
     super(props)
@@ -75,6 +75,10 @@ class Main extends Component {
                 <span className="float-left text-muted"> Exchange Rate </span>
                 <span className="float-right text-muted"> 1 ETH = 100 FDM </span>
               </div>
+              <div className="mb-5">
+                <span className="float-left text-muted"> Exchange FDM Balance </span>
+                <span className="float-right text-muted">  {this.props.state.tokenBalanceEx} </span>
+              </div>
               <button type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
             </form>
           </div>  
@@ -84,4 +88,4 @@ class Main extends Component {
   }
 }
 
-export default Main;
+export default SellTokens;
