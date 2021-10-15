@@ -21,6 +21,7 @@ class App extends Component {
       etherBalance: '0',
       tokenBalance: '0',
       tokenBalanceEx: '0',
+      etherBalanceEx: '0',
       loading: true
     }
   }
@@ -93,11 +94,14 @@ class App extends Component {
     const dAppData = FreedomFinance.networks[networkId]
     if (dAppData) {
       const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, FreedomFinance.networks[networkId].address)
-      
       let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(FreedomFinance.networks[networkId].address).call()
+      let etherBalanceEx = await window.web3.eth.getBalance(FreedomFinance.networks[networkId].address)
       tokenBalanceEx = window.web3.utils.fromWei(tokenBalanceEx, 'ether') 
-      this.setState({ dAppContract, tokenBalanceEx })
+      etherBalanceEx = window.web3.utils.fromWei(etherBalanceEx, 'ether')
+      this.setState({ dAppContract, tokenBalanceEx, etherBalanceEx })
       console.log(this.state.dAppContract)
+      console.log('Exchange Ether Balance: ' +this.state.etherBalanceEx)
+      console.log('Exchange Token Balance: ' +this.state.tokenBalanceEx)
     } else {
       window.alert('Unable to obtain dApp smart contract from network')
     } 
