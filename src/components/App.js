@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import Navbar from './Navbar'
+import Main from './Main'
 import Token from '../abis/Token.json'
 import FreedomFinance from '../abis/FreedomFinance.json'
 const Web3 = require('web3')
@@ -17,8 +18,16 @@ class App extends Component {
       account: '',
       accountBalance: '0',
       etherBalance: '0',
-      tokenBalance: '0'
+      tokenBalance: '0',
+      loading: true
     }
+  }
+
+  buyTokens = (etherAmount) =>{
+    this.setState({ loading: true })
+    this.state.dAppContract.methods.buyTokens()
+                                   .send({ from: this.state.account, value: etherAmount})
+                                   .on('transactionHash', (hash) => { this.setState({loading: false}) })
   }
   
   async componentWillMount() {
@@ -26,6 +35,7 @@ class App extends Component {
     await this.loadWeb3Data()
     await this.loadTokenContract()
     await this.loadDappContract()
+    this.setState({ loading: false })
   }
 
   async loadWeb3() {
@@ -86,6 +96,16 @@ class App extends Component {
   }
 
   render() {
+    let content 
+    if(this.state.loading) {
+      content = <p id="loader" className="text-center">Loading...</p>
+    } else {
+      content = <Main state={this.state}
+                      buyTokens={this.buyTokens}
+      />
+
+    }
+
     return (
       <div>
         <Navbar account={this.state.account} />
@@ -94,8 +114,7 @@ class App extends Component {
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
                 <h1>Welcome to Freedom Finance!</h1>
-                <h3>Your Ether balance is : {this.state.etherBalance}</h3>
-                <h3>Your Token balance is : {this.state.tokenBalance}</h3>
+                {content}
               </div>
             </main>
           </div>
