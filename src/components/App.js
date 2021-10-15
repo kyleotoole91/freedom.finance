@@ -27,10 +27,13 @@ class App extends Component {
     this.setState({ loading: true })
     this.state.dAppContract.methods.buyTokens()
                                    .send({ from: this.state.account, value: etherAmount})
-                                   .on('transactionHash', (hash) => { this.setState({loading: false}) })
+                                   .on('transactionHash', (hash) => { 
+                                      this.componentWillMount() //reconnect/refresh after purchase dialog
+                                    })
   }
   
   async componentWillMount() {
+    this.setState({ loading: true })
     await this.loadWeb3()
     await this.loadWeb3Data()
     await this.loadTokenContract()
