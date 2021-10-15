@@ -1,8 +1,41 @@
 import React, { Component } from 'react'
 import './App.css'
+import Navbar from './Navbar'
 const Web3 = require('web3')
 
+const noWeb3Msg = 'Please install a Web3 provider (MetaMask)';
+const connectedToWeb3Msg = 'Connected to Web3 wallet: ';
+
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      account: '',
+      accountBalance: '0',
+      etherBalance: '0'
+    }
+  }
+  
+  async componentWillMount() {
+    await this.loadWeb3()
+    await this.loadWeb3Data()
+  }
+
+  async loadWeb3Data() {
+    const web3 = window.web3
+    const accounts = await web3.eth.getAccounts()
+    const accountBalance = await web3.eth.getBalance(accounts[0])
+    const etherBalance = web3.utils.fromWei(accountBalance, 'ether')
+
+    this.setState({ account: accounts[0],
+                    etherBalance: accountBalance})
+    console.log(this.state.account)
+
+    this.setState({ accountBalance,
+                    etherBalance })
+    console.log(this.state.accountBalance)
+  }
 
   async loadWeb3() {
     if (window.ethereum) {
@@ -11,43 +44,28 @@ class App extends Component {
                       method: 'eth_requestAccounts'
                     })
                     .then((result) => {
-                      // The result varies by RPC method.
-                      // For example, this method will return a transaction hash hexadecimal string on success.
-                      console.log('Connected to wallet: ' + result)
+                      console.log(connectedToWeb3Msg + result)
                     })
                     .catch((error) => {
-                      window.alert('Please install MetaMask')
+                      window.alert(noWeb3Msg)
                     });
       window.web3 = new Web3(window.ethereum)
+      console.log(window.web3)
     } else {
-      window.alert('Please install MetaMask')
+      window.alert(noWeb3Msg)
     }
   }
-
-  async componentWillMount() {
-    await this.loadWeb3()
-    console.log(window.web3)
-  }
-  
 
   render() {
     return (
       <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="http://www.dappuniversity.com/bootcamp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Dapp University
-          </a>
-        </nav>
+        <Navbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
-                <h1>Hello, World</h1>
+                <h1>Welcome to Freedom Finance!</h1>
+                <h1>You Ether balance is : {this.state.etherBalance}</h1>
               </div>
             </main>
           </div>
