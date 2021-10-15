@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import ethLogo from '../eth-logo.png'
 import tokenLogo from '../token-logo.png'
+import NumberFormat from 'react-number-format';
 
 let etherAmount
+
+const downWardArrow = <span>&#8595;</span>
 
 class SellTokens extends Component {
 
@@ -12,7 +15,7 @@ class SellTokens extends Component {
       tokenAmount: 0
     }
   }
-
+  
   render() {
     return (
       <div id="content">
@@ -27,7 +30,7 @@ class SellTokens extends Component {
               <div>
                 <label className="float-left"><b>ETH Amount</b></label>
                 <span className="float-right text-muted">
-                  Balance: {this.props.state.etherBalance}
+                  Balance:  <NumberFormat value={ this.props.state.etherBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
                 </span>
               </div>
               <div className="input-group mb-4">
@@ -53,8 +56,11 @@ class SellTokens extends Component {
                   </div>
                 </div>
               </div>
+              <div>
+                {downWardArrow}
+              </div>
               <span className="float-right text-muted">
-                Balance: {this.props.state.tokenBalance}
+                Balance:  <NumberFormat value={ this.props.state.tokenBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
               </span>
               <div className="input-group mb-2">
                 <input 
@@ -72,12 +78,14 @@ class SellTokens extends Component {
                 </div>
               </div>
               <div className="mb-5">
-                <span className="float-left text-muted"> Exchange Rate </span>
-                <span className="float-right text-muted"> 1 ETH = 100 FDM </span>
+                <span className="float-left text-muted"> Exchange Balance (FDM) </span>
+                <span className="float-right text-muted"> 
+                <NumberFormat value={ this.props.state.tokenBalanceEx }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
+                </span>
               </div>
               <div className="mb-5">
-                <span className="float-left text-muted"> Exchange FDM Balance </span>
-                <span className="float-right text-muted">  {this.props.state.tokenBalanceEx} </span>
+                <span className="float-left text-muted"> Exchange Rate </span>
+                <span className="float-right text-muted"> 1 ETH = 100 FDM </span>
               </div>
               <button type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
             </form>
