@@ -53,6 +53,9 @@ class Main extends Component {
                   </div>
                 </div>
               </div>
+              <span className="float-right text-muted">
+                Balance: {this.props.state.tokenBalance}
+              </span>
               <div className="input-group mb-2">
                 <input 
                   type="text"
