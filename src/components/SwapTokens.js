@@ -29,7 +29,7 @@ class BuyTokens extends Component {
   sellTokens(event) {
     if (window.ethereum) {
       event.preventDefault()
-      tokenAmount = this.input.value.toString()
+      etherAmount = this.input.value.toString()
       tokenAmount = window.web3.utils.toWei(tokenAmount, 'Ether')
       this.props.sellTokens(tokenAmount)
     } 
@@ -65,19 +65,19 @@ class BuyTokens extends Component {
     if(this.state.switched) {
       topBalance = <NumberFormat value={ this.props.state.tokenBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
       topLogo = tokenLogo 
-      topAbbrev = 'FDM'   
+      topAbbrev = <span>&nbsp;&nbsp;FDM</span>   
       action = 'Sell Tokens'
       bottomBalance = <NumberFormat value={ this.props.state.etherBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
       bottomLogo = ethLogo 
-      bottomAbbrev = 'ETH'
+      bottomAbbrev = <span>&nbsp;&nbsp;&nbsp;ETH</span> 
     } else {
       topBalance = <NumberFormat value={ this.props.state.etherBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
       topLogo = ethLogo 
-      topAbbrev = 'ETH'
+      topAbbrev = <span>&nbsp;&nbsp;&nbsp;ETH</span> 
       action = 'Buy Tokens'
       bottomBalance = <NumberFormat value={ this.props.state.tokenBalance }thousandSeparator={ true } prefix={ '' }  displayType={ 'text' } />
       bottomLogo = tokenLogo 
-      bottomAbbrev = 'FDM'   
+      bottomAbbrev = <span>&nbsp;&nbsp;FDM</span>     
     }
 
     return (
@@ -91,7 +91,7 @@ class BuyTokens extends Component {
               if(!this.state.switched) {
                 this.buyTokens(event)
               }else{
-                this.sellTokens(event)  
+                this.selTokens(event)  
               }
             }}> 
               <div>
@@ -116,7 +116,7 @@ class BuyTokens extends Component {
                 <div className="input-group-append">
                   <div className="input-group-text">
                     <img src={topLogo} height="32" alt=""/>
-                    &nbsp;&nbsp;&nbsp; {topAbbrev}
+                    {topAbbrev}
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ class BuyTokens extends Component {
                 <div className="input-group-append">
                   <div className="input-group-text">
                     <img src={bottomLogo} height="32" alt=""/>
-                    &nbsp;&nbsp; {bottomAbbrev}
+                    {bottomAbbrev}
                   </div>
                 </div>
               </div>
