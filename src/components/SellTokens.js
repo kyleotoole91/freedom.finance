@@ -4,7 +4,7 @@ import tokenLogo from '../token-logo.png'
 import NumberFormat from 'react-number-format';
 
 let etherAmount
-
+const cardRadius = 32
 const downWardArrow = <span>&#8595;</span>
 
 class SellTokens extends Component {
@@ -16,10 +16,15 @@ class SellTokens extends Component {
     }
   }
   
+  
+
   render() {
     return (
       <div id="content">
-        <div className="card mb-4">
+        <div className="card mb-4" style={{ borderTopLeftRadius: cardRadius, 
+                                            borderTopRightRadius: cardRadius,
+                                            borderBottomLeftRadius: cardRadius, 
+                                            borderBottomRightRadius: cardRadius }} >
           <div className="card-body">
             <form className="mb-3" onSubmit={(event) => {
               event.preventDefault()

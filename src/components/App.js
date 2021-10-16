@@ -93,13 +93,15 @@ class App extends Component {
   async loadDappContract() {
     const dAppData = FreedomFinance.networks[networkId]
     if (dAppData) {
-      const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, FreedomFinance.networks[networkId].address)
-      let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(FreedomFinance.networks[networkId].address).call()
-      let etherBalanceEx = await window.web3.eth.getBalance(FreedomFinance.networks[networkId].address)
+      let exchangeAdress = FreedomFinance.networks[networkId].address;
+      const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, exchangeAdress)
+      let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(exchangeAdress).call()
+      let etherBalanceEx = await window.web3.eth.getBalance(exchangeAdress)
       tokenBalanceEx = window.web3.utils.fromWei(tokenBalanceEx, 'ether') 
       etherBalanceEx = window.web3.utils.fromWei(etherBalanceEx, 'ether')
       this.setState({ dAppContract, tokenBalanceEx, etherBalanceEx })
       console.log(this.state.dAppContract)
+      console.log('Exchange address: ' +exchangeAdress)
       console.log('Exchange Ether Balance: ' +this.state.etherBalanceEx)
       console.log('Exchange Token Balance: ' +this.state.tokenBalanceEx)
     } else {
