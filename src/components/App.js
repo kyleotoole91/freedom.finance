@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import Navbar from './Navbar'
-import SellTokens from './BuyTokens'
+import SwapTokens from './SwapTokens'
 import Token from '../abis/Token.json'
 import FreedomFinance from '../abis/FreedomFinance.json'
 const Web3 = require('web3')
@@ -26,25 +26,10 @@ class App extends Component {
     }
   }
 
-  buyTokens = (etherAmount) =>{
-    this.setState({ loading: true })
-    this.state.dAppContract.methods.buyTokens()
-                                   .send({ from: this.state.account, value: etherAmount})
-                                   .on('transactionHash', (hash) => { 
-                                      this.componentWillMount() //reconnect/refresh after purchase dialog
-                                    })
-  }
-  
   async componentWillMount() {
     this.setState({ loading: true })
     await this.loadWeb3()
-    this.setState({ loading: false })
-  }
-
-  async loadData () {
-    await this.loadWeb3Data()
-    await this.loadTokenContract()
-    await this.loadDappContract()
+    
   }
 
   async loadWeb3() {
@@ -59,12 +44,49 @@ class App extends Component {
                       console.log(connectedToWeb3Msg + result)
                     })
                     .catch((error) => {
+                      this.setState({ loading: false })
                       window.alert(noWeb3Msg)
                     });
       console.log(window.web3)
     } else {
       window.alert(noWeb3Msg)
     }
+  }
+
+  async loadData () {
+    await this.loadWeb3Data()
+    await this.loadTokenContract()
+    await this.loadDappContract()
+    this.setState({ loading: false })
+  }
+
+  buyTokens = (etherAmount) =>{
+    this.state.dAppContract.methods.buyTokens()
+                                   .send({ from: this.state.account, value: etherAmount})
+                                   .on('transactionHash', (hash) => { 
+                                      this.loadData() 
+                                    }).catch((error) => {
+                                      this.setState({ loading: false })
+                                      console.log(error)
+                                    });
+  }
+
+  sellTokens = (tokenAmount) =>{
+    this.state.tokenContract.methods.approve(this.state.exchangeAddress, tokenAmount)
+                                    .send({ from: this.state.account})
+                                    .on('transactionHash', (hash) => { 
+                                      this.state.dAppContract.methods.sellTokens(tokenAmount)
+                                                                     .send({ from: this.state.account})
+                                                                     .on('transactionHash', (hash) => { 
+                                                                       this.loadData() 
+                                                                     }).catch((error) => {
+                                                                       this.setState({ loading: false })
+                                                                       console.log(error)
+                                                                      }) 
+                                    }).catch((error) => {
+                                      this.setState({ loading: false })
+                                      console.log(error)
+                                    });
   }
 
   async loadWeb3Data() {
@@ -97,15 +119,15 @@ class App extends Component {
   async loadDappContract() {
     const dAppData = FreedomFinance.networks[networkId]
     if (dAppData) {
-      let exchangeAdress = FreedomFinance.networks[networkId].address;
-      const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, exchangeAdress)
-      let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(exchangeAdress).call()
-      let etherBalanceEx = await window.web3.eth.getBalance(exchangeAdress)
+      let exchangeAddress = FreedomFinance.networks[networkId].address;
+      const dAppContract = new window.web3.eth.Contract(FreedomFinance.abi, exchangeAddress)
+      let tokenBalanceEx = await this.state.tokenContract.methods.balanceOf(exchangeAddress).call()
+      let etherBalanceEx = await window.web3.eth.getBalance(exchangeAddress)
       tokenBalanceEx = window.web3.utils.fromWei(tokenBalanceEx, 'ether') 
       etherBalanceEx = window.web3.utils.fromWei(etherBalanceEx, 'ether')
-      this.setState({ dAppContract, tokenBalanceEx, etherBalanceEx })
+      this.setState({ dAppContract, tokenBalanceEx, etherBalanceEx, exchangeAddress })
       console.log(this.state.dAppContract)
-      console.log('Exchange address: ' +exchangeAdress)
+      console.log('Exchange address: ' +exchangeAddress)
       console.log('Exchange Ether Balance: ' +this.state.etherBalanceEx)
       console.log('Exchange Token Balance: ' +this.state.tokenBalanceEx)
     } else {
@@ -118,8 +140,9 @@ class App extends Component {
     if(this.state.loading) {
       content = <p id="loader" className="text-center">Loading...</p>
     } else {
-      content = <SellTokens state={this.state}
+      content = <SwapTokens state={this.state}
                             buyTokens={this.buyTokens}
+                            sellTokens={this.sellTokens}
       />
     }
 
