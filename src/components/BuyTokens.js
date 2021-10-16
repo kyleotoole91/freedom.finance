@@ -7,7 +7,7 @@ let etherAmount
 const cardRadius = 32
 const downWardArrow = <span>&#8595;</span>
 
-class SellTokens extends Component {
+class BuyTokens extends Component {
 
   constructor(props) {
     super(props)
@@ -15,9 +15,15 @@ class SellTokens extends Component {
       tokenAmount: 0
     }
   }
-  
-  
 
+  buyTokens(event) {
+    if (window.ethereum) {
+      event.preventDefault()
+      etherAmount = window.web3.utils.toWei(etherAmount, 'Ether')
+      this.props.buyTokens(etherAmount)
+    } 
+  }
+  
   render() {
     return (
       <div id="content">
@@ -27,10 +33,7 @@ class SellTokens extends Component {
                                             borderBottomRightRadius: cardRadius }} >
           <div className="card-body">
             <form className="mb-3" onSubmit={(event) => {
-              event.preventDefault()
-              //Purchasing tokens
-              etherAmount = window.web3.utils.toWei(etherAmount, 'Ether')
-              this.props.buyTokens(etherAmount)
+              this.buyTokens(event)
             }}> 
               <div>
                 <label className="float-left"><b>ETH Amount</b></label>
@@ -92,7 +95,7 @@ class SellTokens extends Component {
                 <span className="float-left text-muted"> Exchange Rate </span>
                 <span className="float-right text-muted"> 1 ETH = 100 FDM </span>
               </div>
-              <button type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
+              <button disabled={this.props.state.account === ''} type="submit" className="btn btn-primary btn-block btn-lg">Swap</button>
             </form>
           </div>  
         </div> 
@@ -101,4 +104,4 @@ class SellTokens extends Component {
   }
 }
 
-export default SellTokens;
+export default BuyTokens;

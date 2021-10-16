@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import Navbar from './Navbar'
-import SellTokens from './SellTokens'
+import SellTokens from './BuyTokens'
 import Token from '../abis/Token.json'
 import FreedomFinance from '../abis/FreedomFinance.json'
 const Web3 = require('web3')
@@ -38,10 +38,13 @@ class App extends Component {
   async componentWillMount() {
     this.setState({ loading: true })
     await this.loadWeb3()
+    this.setState({ loading: false })
+  }
+
+  async loadData () {
     await this.loadWeb3Data()
     await this.loadTokenContract()
     await this.loadDappContract()
-    this.setState({ loading: false })
   }
 
   async loadWeb3() {
@@ -52,6 +55,7 @@ class App extends Component {
                     })
                     .then((result) => {
                       window.web3 = new Web3(window.ethereum)
+                      this.loadData()
                       console.log(connectedToWeb3Msg + result)
                     })
                     .catch((error) => {
