@@ -29,7 +29,7 @@ class BuyTokens extends Component {
   sellTokens(event) {
     if (window.ethereum) {
       event.preventDefault()
-      etherAmount = this.input.value.toString()
+      tokenAmount = this.input.value.toString()
       tokenAmount = window.web3.utils.toWei(tokenAmount, 'Ether')
       this.props.sellTokens(tokenAmount)
     } 
@@ -91,7 +91,7 @@ class BuyTokens extends Component {
               if(!this.state.switched) {
                 this.buyTokens(event)
               }else{
-                this.selTokens(event)  
+                this.sellTokens(event)  
               }
             }}> 
               <div>
