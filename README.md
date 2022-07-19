@@ -6,12 +6,12 @@ Simple ERCO20 Token Exchange.
 Written in JS, React and Solidity for Ethereum 
 Smart contracts.
 
-Smart contracts mints FDM tokens and allows
-users to swap them with Ether using Web3 and 
+Smart contracts mint the FDM tokens and allows
+users to swap them for Ether using Web3 and 
 MetaMask.
 
-I deployed this to a locally hosted blockchain
-using gnache.
+These contracts were deployed to a locally hosted blockchain
+using Gnache.
 
-I have also deployed contracts to Rinkeby and 
+I have also deployed the contracts to Rinkeby and 
 Robsten testnets.
